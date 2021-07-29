@@ -9,7 +9,15 @@
           <v-col md="4">
             <h1>Quadro Medalhas</h1>
             <h1></h1>
-            <v-simple-table>
+            <div v-if="isLoading">
+              <v-skeleton-loader
+                  v-for="index in [1,2,3,4,5,7,8,9,10]"
+                  :key="index"
+                  class="my-5"
+                  type="table-heading: heading, text"
+              ></v-skeleton-loader>
+            </div>
+            <v-simple-table v-else>
               <template v-slot:default>
                 <thead>
                 <tr>
@@ -66,7 +74,15 @@
           <v-col md="4">
             <h1>Últimas Notícias</h1>
             <h1></h1>
-            <a v-for="item in items" :key="item.id" :href="item.content.url" target="_blank">
+            <div v-if="isLoading">
+              <v-skeleton-loader
+                  v-for="index in [1,2,3,4,5,7,8,9,10]"
+                  :key="index"
+                  class="my-5"
+                  type="card"
+              ></v-skeleton-loader>
+            </div>
+            <a v-else v-for="item in items" :key="item.id" :href="item.content.url" target="_blank">
               <v-card>
                 <v-img
                     v-if="item.content.image.sizes"
@@ -76,6 +92,7 @@
                 <v-card-title class="mb-5">{{ item.content.title }}</v-card-title>
               </v-card>
             </a>
+
           </v-col>
         </v-row>
       </v-container>
@@ -91,21 +108,27 @@ export default {
   name: 'App',
   components: {Agenda},
   data() {
-    return {items: [], medalTable: {first: {}, data: []}}
+    return {items: [], medalTable: {first: {}, data: []}, loading: true}
   },
   async mounted() {
+    this.loading = true;
     const responseNews = await api.fetchNews();
     const responseMedal = await api.fetchMedalTable();
     this.items = responseNews.data.items;
     this.medalTable.data = responseMedal.data.data.medalTable;
+
+    this.loading = false;
   },
   computed: {
-    getMedalTable(){
+    getMedalTable() {
       const medalTable = this.medalTable;
       medalTable.first = medalTable.data.find(rank => rank.country.code === 'BRA');
-      medalTable.data =  medalTable.data.filter(rank => rank.country.code !== 'BRA');
+      medalTable.data = medalTable.data.filter(rank => rank.country.code !== 'BRA');
 
       return medalTable;
+    },
+    isLoading() {
+      return this.loading;
     }
   }
 }

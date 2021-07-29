@@ -10,7 +10,7 @@
           mdi-chevron-left
         </v-icon>
       </v-btn>
-      Hoje ({{ `${date.getDate()}-${(date.getMonth() + 1)}` }})
+      Dia ({{ `${date.getDate()}-${(date.getMonth() + 1)}` }})
       <v-btn
           class="ml-3"
           @click="handleClick(1)"
