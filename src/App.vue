@@ -3,13 +3,12 @@
     <v-main>
       <v-container :fluid="true">
         <v-row>
-          <v-col md="3">
+          <v-col md="4">
             <Agenda/>
           </v-col>
           <v-col md="4">
             <h1>Quadro Medalhas</h1>
             <h1></h1>
-
             <v-simple-table>
               <template v-slot:default>
                 <thead>
@@ -18,13 +17,13 @@
                     #
                   </th>
                   <th class="text-left">
-                    Country
+                    País
                   </th>
                   <th class="text-center">
-                    Gold
+                    Ouro
                   </th>
                   <th class="text-center">
-                    Silver
+                    Prata
                   </th>
                   <th class="text-center">
                     Bronze
@@ -35,8 +34,19 @@
                 </tr>
                 </thead>
                 <tbody>
+                <tr>
+                  <td>{{ getMedalTable.first.ranking }}</td>
+                  <td class="text-left">
+                    <img :src="getMedalTable.first.country.flag.svg.url" width="20" height="20"/>
+                    {{ getMedalTable.first.country.name }}
+                  </td>
+                  <td>{{ getMedalTable.first.gold }}</td>
+                  <td>{{ getMedalTable.first.silver }}</td>
+                  <td>{{ getMedalTable.first.bronze }}</td>
+                  <td>{{ getMedalTable.first.total }}</td>
+                </tr>
                 <tr
-                    v-for="(rank,index) in medalTable"
+                    v-for="(rank,index) in getMedalTable.data"
                     :key="index"
                 >
                   <td>{{ rank.ranking }}</td>
@@ -74,20 +84,29 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Agenda from "@/components/Agenda";
+import api from "@/api/api";
 
 export default {
   name: 'App',
   components: {Agenda},
   data() {
-    return {items: [], medalTable: {}}
+    return {items: [], medalTable: {first: {}, data: []}}
   },
   async mounted() {
-    const response = await axios.get('https://falkor-cda.bastian.globo.com/tenants/ge/instances/bc4d10b9-ed92-49c4-accb-ca14e4a1dd3e/posts/page/1')
-    const responseMedal = await axios.get('https://goulartf.com/api/testmedalTable.php')
-    this.items = response.data.items;
-    this.medalTable = responseMedal.data.data.medalTable;
+    const responseNews = await api.fetchNews();
+    const responseMedal = await api.fetchMedalTable();
+    this.items = responseNews.data.items;
+    this.medalTable.data = responseMedal.data.data.medalTable;
+  },
+  computed: {
+    getMedalTable(){
+      const medalTable = this.medalTable;
+      medalTable.first = medalTable.data.find(rank => rank.country.code === 'BRA');
+      medalTable.data =  medalTable.data.filter(rank => rank.country.code !== 'BRA');
+
+      return medalTable;
+    }
   }
 }
 </script>

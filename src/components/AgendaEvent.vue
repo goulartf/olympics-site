@@ -8,12 +8,24 @@
     >
       <v-row class="pt-1">
         <v-col cols="3">
-          <strong>{{ event.startHour }}</strong>
+          <strong>{{ 'match' in event ? event.match.startHour : event.startHour }}</strong>
         </v-col>
         <v-col>
-          <strong>{{ `${event.sport.name} - ${event.category.name}` }}</strong>
+          <p class="mb-1">
+            <strong>{{ `${event.sport.name} - ${event.category.name}` }}</strong>
+            <br/>
+            <strong v-if="event.modality">{{ `${event.modality.name}` }}</strong>
+            <br/>
+            <strong>{{ `${event.stage}` }}</strong>
+          </p>
           <div class="text-caption">
             <p v-for="(participant, index) in event.participants" :key="index" class="mb-0">
+              <img v-if="participant.flag" :src="participant.flag.svg.url" width="20" height="20"
+                   :alt="participant.name"
+                   :title="participant.name"/>
+              <img v-if="participant.represents" :src="participant.represents.flag.svg.url" width="20" height="20"
+                   :alt="participant.represents.name"
+                   :title="participant.represents.name"/>
               {{ participant.popularName }}
             </p>
           </div>
