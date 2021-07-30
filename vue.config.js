@@ -13,12 +13,12 @@ module.exports = {
     appleMobileWebAppStatusBarStyle: 'black',
 
     // configure the workbox plugin
-    workboxPluginMode: 'InjectManifest',
-    workboxOptions: {
-      // swSrc is required in InjectManifest mode.
-      swSrc: 'dev/sw.js',
-      // ...other Workbox options...
-    },
+    // workboxPluginMode: 'InjectManifest',
+    // workboxOptions: {
+    //   // swSrc is required in InjectManifest mode.
+    //   swSrc: 'dev/sw.js',
+    //   // ...other Workbox options...
+    // },
     iconPaths: {
       favicon32: 'img/icons/favicon-32x32.png',
       favicon16: 'img/icons/favicon-16x16.png',
