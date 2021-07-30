@@ -21,7 +21,7 @@
                 :key="index"
             >
               <v-row class="pt-1">
-                <v-col cols="3">
+                <v-col cols="12" md="3">
                   <strong>{{ 'match' in event ? event.match.startHour : event.startHour }}</strong>
                 </v-col>
                 <v-col>
