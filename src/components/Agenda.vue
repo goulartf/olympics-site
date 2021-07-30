@@ -48,18 +48,22 @@
               ></v-skeleton-loader>
             </div>
 
-            <v-timeline
-                v-else
-                align-top
-                dense
-            >
-              <AgendaEvent color="green" :events="allEvents.now" :showWatch="true"/>
-              <AgendaEvent color="blue" :events="allEvents.future"/>
-              <v-divider/>
-              <h4>Eventos Passados</h4>
-              <v-divider/>
-              <AgendaEvent color="gray" :events="allEvents.past"/>
-            </v-timeline>
+            <div v-else>
+              <AgendaEvent color="green"
+                           :events="allEvents.now"
+                           :showWatch="true"
+                           :openPanel="allEvents.now.length<=0"
+                           title="Agora"/>
+              <AgendaEvent color="blue"
+                           :events="allEvents.future"
+                           title="Próximos Eventos"
+                           :openPanel="allEvents.now.length!==0"/>
+              <AgendaEvent color="gray"
+                           :events="allEvents.past"
+                           title="Eventos Passados"
+                           :openPanel="true"/>
+            </div>
+
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -75,18 +79,22 @@
               ></v-skeleton-loader>
             </div>
 
-            <v-timeline
-                v-else
-                align-top
-                dense
-            >
-              <AgendaEvent color="green" :events="allBrazilEvents.now" :showWatch="true"/>
-              <AgendaEvent color="blue" :events="allBrazilEvents.future"/>
-              <v-divider/>
-              <h4>Eventos Passados</h4>
-              <v-divider/>
-              <AgendaEvent color="gray" :events="allBrazilEvents.past"/>
-            </v-timeline>
+            <div v-else>
+              <AgendaEvent color="green"
+                           :events="allBrazilEvents.now"
+                           :showWatch="true"
+                           :openPanel="allBrazilEvents.now.length<=0"
+                           title="Agora"/>
+              <AgendaEvent color="blue"
+                           :events="allBrazilEvents.future"
+                           title="Próximos Eventos"
+                           :openPanel="allBrazilEvents.now.length!==0"/>
+              <AgendaEvent color="gray"
+                           :events="allBrazilEvents.past"
+                           title="Eventos Passados"
+                           :openPanel="true"/>
+            </div>
+
           </v-card-text>
         </v-card>
       </v-tab-item>
