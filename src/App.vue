@@ -2,7 +2,7 @@
   <v-app>
     <v-main>
       <v-app-bar app class="text-center">
-        <h1 class="text-center" style="width: 100%">Tokyo 2020</h1>
+        <h1 class="text-center" style="width: 100%">Tóquio 2020</h1>
       </v-app-bar>
       <v-container :fluid="true">
         <v-row>
