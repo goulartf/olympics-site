@@ -36,7 +36,6 @@ const actions = {
             events.past = [...events.past, ...eventsBySport.past];
         });
 
-        console.log(events);
         events.now = events.now.filter((a) => a).sort(customSort);
         events.future = events.future.filter((a) => a).sort(customSort);
         events.past = events.past.filter((a) => a).sort(customSort);

@@ -3,16 +3,22 @@
 
     <h2 class="mb-5">
       <v-btn
-          class="mr-3"
+          class="mr-1"
+          elevation="2"
+          small
+          fab
           @click="handleClick(-1)"
       >
         <v-icon>
           mdi-chevron-left
         </v-icon>
       </v-btn>
-      Dia ({{ `${date.getDate()}-${(date.getMonth() + 1)}` }})
+      Dia {{ `${date.getDate()}-${(date.getMonth() + 1)}` }}
       <v-btn
-          class="ml-3"
+          class="ml-1"
+          elevation="2"
+          small
+          fab
           @click="handleClick(1)"
       >
         <v-icon>
@@ -36,68 +42,82 @@
       </v-tab>
     </v-tabs>
     <v-tabs-items v-model="tab">
-      <v-tab-item key="tab-all">
-        <v-card flat>
-          <v-card-text>
-            <div v-if="isLoading">
-              <v-skeleton-loader
-                  v-for="index in [1,2,3,4,5]"
-                  :key="index"
-                  class="my-5"
-                  type="list-item-avatar, divider"
-              ></v-skeleton-loader>
-            </div>
+      <div class="overflow-y-auto" :style="{...setDynamicHeight}">
+        <v-tab-item key="tab-all">
+          <v-card flat>
+            <v-card-text>
+              <div v-if="isLoading">
+                <v-skeleton-loader
+                    v-for="index in [1,2,3,4,5]"
+                    :key="index"
+                    class="my-5"
+                    type="list-item-avatar, divider"
+                ></v-skeleton-loader>
+              </div>
 
-            <div v-else>
-              <AgendaEvent color="green"
-                           :events="allEvents.now"
-                           :showWatch="true"
-                           :openPanel="allEvents.now.length<=0"
-                           title="Agora"/>
-              <AgendaEvent color="blue"
-                           :events="allEvents.future"
-                           title="Próximos Eventos"
-                           :openPanel="allEvents.now.length!==0"/>
-              <AgendaEvent color="gray"
-                           :events="allEvents.past"
-                           title="Eventos Passados"
-                           :openPanel="true"/>
-            </div>
+              <div v-else>
+                <v-expansion-panels>
+                  <v-expansion-panel
+                      v-for="(events,type,i) in {now: allEvents.now, future: allEvents.future, past: allEvents.past}"
+                      :key="i"
+                  >
+                    <v-expansion-panel-header
+                        v-if="events.length > 0"
+                        :color="getEventsInformation(type).color"
+                        :class="getEventsInformation(type).styleClass">
+                      <strong>{{ getEventsInformation(type).title + ` - (${events.length})` }}</strong>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <AgendaEvent color="green"
+                                   :type="type"
+                                   :height="setDynamicHeight"
+                                   :events="events"/>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </div>
 
-          </v-card-text>
-        </v-card>
-      </v-tab-item>
-      <v-tab-item key="tab-brasil">
-        <v-card flat>
-          <v-card-text>
-            <div v-if="isLoading">
-              <v-skeleton-loader
-                  v-for="index in [1,2,3,4,5]"
-                  :key="index"
-                  class="my-5"
-                  type="list-item-avatar, divider"
-              ></v-skeleton-loader>
-            </div>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item key="tab-brasil">
+          <v-card flat>
+            <v-card-text>
+              <div v-if="isLoading">
+                <v-skeleton-loader
+                    v-for="index in [1,2,3,4,5]"
+                    :key="index"
+                    class="my-5"
+                    type="list-item-avatar, divider"
+                ></v-skeleton-loader>
+              </div>
 
-            <div v-else>
-              <AgendaEvent color="green"
-                           :events="allBrazilEvents.now"
-                           :showWatch="true"
-                           :openPanel="allBrazilEvents.now.length<=0"
-                           title="Agora"/>
-              <AgendaEvent color="blue"
-                           :events="allBrazilEvents.future"
-                           title="Próximos Eventos"
-                           :openPanel="allBrazilEvents.now.length!==0"/>
-              <AgendaEvent color="gray"
-                           :events="allBrazilEvents.past"
-                           title="Eventos Passados"
-                           :openPanel="true"/>
-            </div>
+              <div v-else>
+                <v-expansion-panels>
+                  <v-expansion-panel
+                      v-for="(events,type,i) in {now: allBrazilEvents.now, future: allBrazilEvents.future, past: allBrazilEvents.past}"
+                      :key="i"
+                  >
+                    <v-expansion-panel-header
+                        v-if="events.length > 0"
+                        :color="getEventsInformation(type).color"
+                        :class="getEventsInformation(type).styleClass">
+                      <strong>{{ getEventsInformation(type).title + ` - (${events.length})` }}</strong>
+                    </v-expansion-panel-header>
+                    <v-expansion-panel-content>
+                      <AgendaEvent color="green"
+                                   :type="type"
+                                   :height="setDynamicHeight"
+                                   :events="events"/>
+                    </v-expansion-panel-content>
+                  </v-expansion-panel>
+                </v-expansion-panels>
+              </div>
 
-          </v-card-text>
-        </v-card>
-      </v-tab-item>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </div>
     </v-tabs-items>
 
   </div>
@@ -109,19 +129,52 @@ import AgendaEvent from "@/components/AgendaEvent";
 export default {
   name: 'Agenda',
   components: {AgendaEvent},
+  props: {
+    height: Number
+  },
   data() {
     return {date: new Date(), tab: null}
   },
   async mounted() {
     await this.fetchEvents(this.date);
   },
-  computed: mapGetters(['allEvents', 'allBrazilEvents', 'isLoading']),
+  computed: {
+    ...mapGetters(['allEvents', 'allBrazilEvents', 'isLoading']),
+    setDynamicHeight() {
+      if (window.innerWidth <= 768) {
+        return {minHeight: '176px'};
+      }
+
+      return {height: (this.height - 98)+'px'};
+    }
+  },
   methods: {
     ...mapActions(['fetchEvents']),
     async handleClick(cursor) {
       this.date.setDate(this.date.getDate() + cursor);
       await this.fetchEvents(this.date);
     },
+    getEventsInformation: (type) => {
+      let title = '';
+      let color = '';
+      let styleClass = '';
+
+      switch (type) {
+        case 'now':
+          title = 'Agora';
+          color = 'green';
+          styleClass = 'white--text';
+          break;
+        case 'past':
+          title = 'Eventos já realizados';
+          break;
+        case 'future':
+          title = 'Próximos eventos';
+          break;
+      }
+
+      return {title, styleClass, color};
+    }
   }
 }
 </script>
